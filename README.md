@@ -46,7 +46,7 @@ FCM assumes your client uses **CLIP**, the **CLI**ent **P**rotocol, to communica
 
 NOTE: You must call `FIBSCookie()` with every message received from the FIBS server, starting immediately after estabilishing a TCP/IP connection with the server. You cannot selectively call FIBSCookie with some messages, but not others, because the underlying state model may get confused.
 
-If you disconnect and reconnect to the FIBS server, you should call `ResetFIBSCookieMonster();` before reconnecting to reset the state properly.
+If you disconnect and reconnect to the FIBS server, you should call `ResetFIBSCookieMonster();` before reconnecting to reset the state properly. *Øystein: This is done automatically if the cookie is `FIBS_Goodbye` or `FIBS_Timeout`.*
 
 **Malformed Messages**
 
