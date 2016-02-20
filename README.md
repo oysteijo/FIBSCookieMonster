@@ -1,6 +1,6 @@
 # FIBSCookieMonster
 
-Keep an updated version of FIBS Cookie Monster available. This repository contains the original FCM code with some modifications.
+Keep an updated version of FIBS Cookie Monster available. This repository contains the original FCM code with some modifications. Please note that this is coded with C99 in mind. please add `-std=c99` or `-std=gnu99` if your compiler does not interprete C99 by default. (Clang does C99 by default I believe, GCC does not.)
 
 - Supporting version 1009 of **CLIP**
 - Use dispatch table and function pointers to handle the state.
