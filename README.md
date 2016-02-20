@@ -6,7 +6,9 @@ Keep an updated version of FIBS Cookie Monster available. This repository contai
 - Use dispatch table and function pointers to handle the state.
 - Some code cleanup.
 
-The following of this document is the original of documentation file by Paul Ferguson, except where noted.
+**TODO:** Merge the updates form BGO FCM.
+
+The following part of this document is the original of documentation file by Paul Ferguson, except where noted.
 
 
 ## FIBSCookieMonster
