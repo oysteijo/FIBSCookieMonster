@@ -149,7 +149,6 @@ static int uninitialized_state_cookies( const char *message )
  *
  * NOTE: The incoming FIBS message should NOT include line terminators.
  */
-
 int FIBSCookie(const char * message)
 {
     return state( message );
@@ -183,15 +182,12 @@ void ReleaseFIBSCookieMonster()
 
 // NOTE: The for() loop's body is empty, all work done inside the for() statement.
 #define TRASH_BATCH(startingPoint) { CookieDough * m; for (m = startingPoint; (m); m = ReleaseCookieDough(m)); startingPoint = NULL; }
-
     TRASH_BATCH(AlphaBatch)
     TRASH_BATCH(StarsBatch)
     TRASH_BATCH(NumericBatch)
     TRASH_BATCH(LoginBatch)
     TRASH_BATCH(MOTDBatch)
 #undef TRASH_BATCH
-
-    printf("Just cleaned up that Monster mash!\n");
     state = uninitialized_state_cookies;
 }
 
@@ -199,7 +195,6 @@ void ReleaseFIBSCookieMonster()
 // Note that the order of items in this function is important, in some cases
 // messages are very similar and are differentiated by depending on the
 // order the batch is processed.
-
 static void PrepareBatches()
 {
     CookieDough * current;
@@ -497,10 +492,8 @@ static void PrepareBatches()
     START_BATCH(MOTDBatch, CLIP_MOTD_END,  "^4$");
 
     state = login_state_cookies;
-
 #undef START_BATCH
 #undef ADD_DOUGH
-        
 }
 
 // Allocates memory for a new CookieDough struct, initializes it, and returns pointer.
@@ -537,7 +530,6 @@ static CookieDough * ReleaseCookieDough(CookieDough * theDough)
 }
 
 #if TEST_FIBSCOOKIEMONSTER
-
 // This test program just prepends the cookie to the front of each message.
 //
 // The easiest way to run this is  to capture an online session to a text file.
@@ -559,31 +551,31 @@ static CookieDough * ReleaseCookieDough(CookieDough * theDough)
 //
 // NOTE: The incoming FIBS lines should NOT include a line terminator.
 //
+// Oystein: The direct piping from telnet works on my system: Arch Linux.
+//
 // Oystein: In case you have problem with line terminators you can try this line stripping code.
 static char *strip(char *str)
 {
-  char *end;
+    char *end;
 
-  // Trim leading space
-  while(isspace(*str)) str++;
+    // Trim leading space
+    while(isspace(*str)) str++;
 
-  if(*str == 0)  // All spaces?
+    if(*str == 0)  // All spaces?
+        return str;
+
+    // Trim trailing space
+    end = str + strlen(str) - 1;
+    while(end > str && isspace(*end)) end--;
+
+    // Write new null terminator
+    *(end+1) = 0;
+
     return str;
-
-  // Trim trailing space
-  end = str + strlen(str) - 1;
-  while(end > str && isspace(*end)) end--;
-
-  // Write new null terminator
-  *(end+1) = 0;
-
-  return str;
 }
-
 
 int main(int UNUSED(argc), UNUSED(const char * argv[]))
 {
-
     int numCookies[500] = { 0 };
     int i;
     char message[4096];
@@ -607,5 +599,4 @@ int main(int UNUSED(argc), UNUSED(const char * argv[]))
     
     return 0;
 }
-
 #endif
