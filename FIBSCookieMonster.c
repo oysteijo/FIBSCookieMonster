@@ -79,16 +79,18 @@ static int uninitialized_state_cookies ( const char *message );
 
 typedef int (*state_function)( const char *m );
 static state_function state = uninitialized_state_cookies;
-    
-#define loop_batch_search(batch,msg)                                \
-    do {                                                            \
-        for (CookieDough *ptr = batch; (ptr); ptr = ptr->next){     \
-            if (regexec(&(ptr->regex), msg, 0, NULL, 0) == 0){      \
-                result = ptr->cookie;                               \
-                break;                                              \
-            }                                                       \
-        }                                                           \
-    } while(0);
+
+static int loop_batch_search( CookieDough *batch, const char *msg, int default_cookie )
+{
+    int cookie = default_cookie;
+    for (CookieDough *ptr = batch; (ptr); ptr = ptr->next){
+        if (regexec(&(ptr->regex), msg, 0, NULL, 0) == 0){
+            cookie = ptr->cookie;
+                break;
+        }
+    }
+    return cookie;
+}
 
 static int logout_state_cookies( const char UNUSED(*message ))
 {
@@ -100,41 +102,39 @@ static int run_state_cookies( const char *message )
     if (strlen(message) == 0)
         return FIBS_Empty;
 
-    int result = FIBS_Unknown;
+    int cookie = FIBS_Unknown;
     register const char ch = message[0];
     if (isdigit(ch)) {         // CLIP messages and miscellaneous numeric messages
-        loop_batch_search( NumericBatch, message );
+        cookie = loop_batch_search( NumericBatch, message, cookie );
     } else if (ch == '*') {    // '** ' messages
-        loop_batch_search( StarsBatch, message );
+        cookie = loop_batch_search( StarsBatch, message, cookie );
     } else {                   // all other messages
-        loop_batch_search( AlphaBatch, message );
+        cookie = loop_batch_search( AlphaBatch, message, cookie );
     }
 
-    if (result == FIBS_Goodbye || result == FIBS_Timeout){
+    if (cookie == FIBS_Goodbye || cookie == FIBS_Timeout){
         ReleaseFIBSCookieMonster();
         state = logout_state_cookies;  /* Absorb the logout state */
     }
 
-    return result;
+    return cookie;
 }
 
 static int motd_state_cookies( const char *message )
 {
-    int result = FIBS_MOTD;
-    loop_batch_search( MOTDBatch, message );
-    if (result == CLIP_MOTD_END)
+    int cookie = loop_batch_search( MOTDBatch, message, FIBS_MOTD );
+    if (cookie == CLIP_MOTD_END)
         state = run_state_cookies;
-    return result;
+    return cookie;
 }
 
 static int login_state_cookies( const char *message )
 {
-    int result = FIBS_PreLogin;
-    loop_batch_search( LoginBatch, message );
-    if (result == CLIP_MOTD_BEGIN)
+    int cookie = loop_batch_search( LoginBatch, message, FIBS_PreLogin );
+    if (cookie == CLIP_MOTD_BEGIN)
         state = motd_state_cookies;
 
-    return result;
+    return cookie;
 }
 
 static int uninitialized_state_cookies( const char *message )
